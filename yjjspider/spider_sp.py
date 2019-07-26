@@ -21,7 +21,7 @@ class SpiderMain(object):
         self.F82T_true = ''
         self.JSESSIONID = ''
         self.meta = ''
-        self.url = 'http://samr.cfda.gov.cn/WS01/CL1792/'
+        self.url = 'http://samr.cfda.gov.cn/WS01/CL1792/index_3.html'
         # self.url_list = 'http://app1.sfda.gov.cn/datasearchcnda/face3/base.jsp'
         # 请求头
         self.headers = {
@@ -39,8 +39,8 @@ class SpiderMain(object):
 
         # 请求cookie
         self.cookies = {
-            'FSSBBIl1UgzbN7N82S': '',
-            'FSSBBIl1UgzbN7N82T': '',
+            'FSSBBIl1UgzbN7N84S': '',
+            'FSSBBIl1UgzbN7N84T': '',
             'JSESSIONID': ''
         }
         
@@ -48,16 +48,23 @@ class SpiderMain(object):
     def getCookie(self):
         rsq = requests.get(self.url, headers=self.headers)
         rsq.close()
-        # print(rsq.cookies)
+        print(rsq.cookies.keys())
+        self.cookies = {
+            rsq.cookies.keys()[0]: '',
+            rsq.cookies.keys()[1]: '',
+            'JSESSIONID': ''
+        }
         # 第一次请求得到假的f82s,f82t,和metacontent
-        self.F82S = rsq.cookies['FSSBBIl1UgzbN7N82S']
-        self.F82T = rsq.cookies['FSSBBIl1UgzbN7N82T']
+        print(dict(rsq.cookies))
+        import ipdb; ipdb.set_trace()
+        self.F82S = rsq.cookies[rsq.cookies.keys()[0]]
+        self.F82T = rsq.cookies[rsq.cookies.keys()[1]]
         rsqHtml = etree.HTML(rsq.text)
         self.meta = rsqHtml.xpath(
             '//*[@id="9DhefwqGPrzGxEp9hPaoag"]/@content')[0]
         self.F82T_true = ecjs.call("getcookie", self.meta, self.F82T)
-        self.cookies['FSSBBIl1UgzbN7N82S'] = self.F82S
-        self.cookies['FSSBBIl1UgzbN7N82T'] = self.F82T_true
+        self.cookies[rsq.cookies.keys()[0]] = self.F82S
+        self.cookies[rsq.cookies.keys()[1]] = self.F82T_true
         rsq = requests.get(self.url, headers=self.headers,
                            cookies=self.cookies)
         print(rsq.status_code)
