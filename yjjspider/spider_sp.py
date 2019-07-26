@@ -43,11 +43,7 @@ class SpiderMain(object):
             'FSSBBIl1UgzbN7N82T': '',
             'JSESSIONID': ''
         }
-        # 列表页请求参数
-        self.data = {
-            'tableId': tableId,
-            'curstart': '1',
-        }
+        
 
     def getCookie(self):
         rsq = requests.get(self.url, headers=self.headers)
@@ -64,6 +60,7 @@ class SpiderMain(object):
         self.cookies['FSSBBIl1UgzbN7N82T'] = self.F82T_true
         rsq = requests.get(self.url, headers=self.headers,
                            cookies=self.cookies)
+        print(rsq.status_code)
         return rsq
 
 if __name__ == '__main__':
